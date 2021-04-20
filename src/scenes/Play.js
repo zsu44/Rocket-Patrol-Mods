@@ -56,7 +56,7 @@ class Play extends Phaser.Scene{
         this.bird3 = new Bird(
             this,
             Math.floor((Math.random() * (640-borderPadding*2))),
-            borderUISize*8 + borderUISize*2,
+            borderUISize*8 + borderUISize*1,
             'bird',
             0,10, 2
         );
@@ -99,16 +99,16 @@ class Play extends Phaser.Scene{
         
         //60-second
 
-        this.clock = this.time.delayedCall (game.settings.gameTimer, () => {
-            this.add.text(game.config.width/2, game.config.height/2, 'GAME OVER',scoreConfig).setOrigin(0.5);
-            this.add.text(game.config.width/2, game.config.height/2 + 64, 'Press (R) to Restart or ← for Menu (R) to Restart', scoreConfig).setOrigin(0.5);
+        this.clock = this.time.delayedCall(game.settings.gameTimer, () => {
+            this.add.text(game.config.width/2, game.config.height/2, 'GAME OVER', this.scoreConfig).setOrigin(0.5);
+            this.add.text(game.config.width/2, game.config.height/2 + 64, 'Press R to Restart or <- for Menu', this.scoreConfig).setOrigin(0.5);
             this.gameOver = true;
-        },null,this);
+        }, null, this);
 
         //display time
         let timeConfig = {
             fontFamily: 'Courier',
-            fontSize: '20px',
+            fontSize: '24px',
             backgroundColor:'#73CCF8',
             color: '#fff',
             align: 'center',
@@ -118,18 +118,16 @@ class Play extends Phaser.Scene{
             },
             fixedWidth: 200
         }
-        //time counter
-        this.timeLeft = this.clock.getElapsed();
-        this.baseTime = game.settings.gameTimer;
-        this.timeDisplay = this.add.text(game.config.width - (200 + borderUISize + borderPadding), 
+        this.timeLeft = this.add.text(game.config.width - (200 + borderUISize + borderPadding), 
         borderUISize + 15, 
-        'Timer: ' + this.timeLeft,
+        'Timer: ' + Math.round(this.clock.getRemainingSeconds()),
          timeConfig);
+            
     }
 
         
     update() {
-        this.sky.tilePositionX -= bulletSpeed;
+        this.sky.tilePositionX -= 0.5;
         if(!this.gameOver){
             this.p1Bullet.update();
             this.bird1.update();
@@ -142,25 +140,32 @@ class Play extends Phaser.Scene{
         if(this.gameOver && Phaser.Input.Keyboard.JustDown(keyLEFT)){
             this.scene.start("menuScene");
         }
-
+        // checkCollision
         if(this.checkCollision(this.p1Bullet, this.bird3)){
             this.p1Bullet.reset();
             this.birdKill(this.bird3);
+            let timeRemaining = this.clock.getRemaining();
+            this.time.removeAllEvents();
+            this.createTime(timeRemaining, 500);
             
         }
         if(this.checkCollision(this.p1Bullet, this.bird2)){
             this.p1Bullet.reset();
             this.birdKill(this.bird2);
+            let timeRemaining = this.clock.getRemaining();
+            this.time.removeAllEvents();
+            this.createTime(timeRemaining, 2000);
             
         }
         if(this.checkCollision(this.p1Bullet, this.bird1 )){
             this.p1Bullet.reset();
             this.birdKill(this.bird1);
+            let timeRemaining = this.clock.getRemaining();
+            this.time.removeAllEvents();
+            this.createTime(timeRemaining, 5000);
             
         }
-
-        
-        
+        this.timeLeft.text = 'Timer: ' + Math.round(this.clock.getRemainingSeconds());
 
     }
     checkCollision(bullet,bird){
@@ -188,5 +193,13 @@ class Play extends Phaser.Scene{
         this.sound.play('sfx_birdhit');
     }
     
+    createTime(timeLeft, timeAdd){ 
+        this.clock = this.time.delayedCall(timeLeft + timeAdd, () => {
+            this.add.text(game.config.width/2, game.config.height/2, 'GAME OVER', this.scoreConfig).setOrigin(0.5);
+            this.add.text(game.config.width/2, game.config.height/2 + 64, 'Press R to Restart or <- for Menu', this.scoreConfig).setOrigin(0.5);
+            this.gameOver = true;
+        }, null, this);
+
+    }
     
 }
