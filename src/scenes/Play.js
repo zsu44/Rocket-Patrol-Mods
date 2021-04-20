@@ -6,10 +6,11 @@ class Play extends Phaser.Scene{
 
         this.load.image('sky','assets/sky.png');
         this.load.image('bullet','assets/bullets.png');
-        this.load.image('spaceship','assets/bird.png');
+        this.load.image('bird','assets/bird.png');
         this.load.spritesheet('explosion', './assets/explosion.png', {frameWidth: 64, frameHeight: 32, startFrame: 0, endFrame: 9});
-        this.load.audio('sfx_explosion', './assets/explosion38.wav');
-        this.load.audio('sfx_rocket', './assets/rocket_shot.wav');
+        //this.load.audio('sfx_explosion', './assets/explosion38.wav');
+        //this.load.audio('sfx_rocket', './assets/rocket_shot.wav');
+        this.load.audio('sfx_gunshot','./assets/gunshot.mp3');
         this.load.audio('sfx_birdhit', './assets/bird_hit.wav');
     }
     create(){
@@ -32,27 +33,27 @@ class Play extends Phaser.Scene{
             'bullet'
         );
 
-        this.ship1 = new Ship(
+        this.bird1 = new Bird(
             this,
             100,
             200,
-            'spaceship',
+            'bird',
             0, 30
         );
 
-        this.ship2 = new Ship(
+        this.bird2 = new Bird(
             this,
             300,
             250,
-            'spaceship',
+            'bird',
             0,20
         );
 
-        this.ship3 = new Ship(
+        this.bird3 = new Bird(
             this,
             380,
             300,
-            'spaceship',
+            'bird',
             0,10
         );
 
@@ -106,9 +107,9 @@ class Play extends Phaser.Scene{
         this.sky.tilePositionX -= 0.5;
         if(!this.gameOver){
             this.p1Bullet.update();
-            this.ship1.update();
-            this.ship2.update();
-            this.ship3.update();
+            this.bird1.update();
+            this.bird2.update();
+            this.bird3.update();
         }
         if(this.gameOver && Phaser.Input.Keyboard.JustDown(keyR)){
             this.scene.restart();
@@ -117,44 +118,44 @@ class Play extends Phaser.Scene{
             this.scene.start("menuScene");
         }
 
-        if(this.checkCollision(this.p1Bullet, this.ship3)){
+        if(this.checkCollision(this.p1Bullet, this.bird3)){
             this.p1Bullet.reset();
-            this.shipExplode(this.ship3);
+            this.birdKill(this.bird3);
         }
-        if(this.checkCollision(this.p1Bullet, this.ship2)){
+        if(this.checkCollision(this.p1Bullet, this.bird2)){
             this.p1Bullet.reset();
-            this.shipExplode(this.ship2);
+            this.birdKill(this.bird2);
         }
-        if(this.checkCollision(this.p1Bullet, this.ship1)){
+        if(this.checkCollision(this.p1Bullet, this.bird1 )){
             this.p1Bullet.reset();
-            this.shipExplode(this.ship1);
+            this.birdKill(this.bird1);
         }
         
 
     }
-    checkCollision(bullet,ship){
-        if(bullet.x < ship.x + ship.width && 
-            bullet.x + bullet.width > ship.x && 
-            bullet.y < ship.y + ship.height &&
-            bullet.height + bullet.y > ship. y){
+    checkCollision(bullet,bird){
+        if(bullet.x < bird.x + bird.width && 
+            bullet.x + bullet.width > bird.x && 
+            bullet.y < bird.y + bird.height &&
+            bullet.height + bullet.y > bird. y){
                 return true;
             }else{
                 return false;
             }
     }
 
-    shipExplode(ship){
-        ship.alpha = 0;
-        let boom = this.add.sprite(ship.x,ship.y,'explosion').setOrigin(0,0);
+    birdKill(bird){
+        bird.alpha = 0;
+        let boom = this.add.sprite(bird.x,bird.y,'explosion').setOrigin(0,0);
         boom.anims.play('explode');
         boom.on('animationcomplete',() => {
-            ship.reset();
-            ship.alpha = 1;
+            bird.reset();
+            bird.alpha = 1;
             boom.destroy();
         });
-        this.p1Score += ship.pointValue;
+        this.p1Score += bird.pointValue;
         this.scoreLeft.text = this.p1Score;
-        this.sound.play('sfx_explosion');
+        this.sound.play('sfx_birdhit');
     }
     
     
