@@ -12,9 +12,13 @@ class Play extends Phaser.Scene{
         //this.load.audio('sfx_rocket', './assets/rocket_shot.wav');
         this.load.audio('sfx_gunshot','./assets/gunshot.mp3');
         this.load.audio('sfx_birdhit', './assets/bird_hit.wav');
+        this.load.audio('bgMusic','/assets/bgm.wav');
     }
     create(){
+        // background music
+        this.backgroundMusic = this.sound.add('bgMusic',{loop:true});
 
+        this.backgroundMusic.play();
 
         this.anims.create({
             key:'explode',
@@ -35,35 +39,35 @@ class Play extends Phaser.Scene{
 
         this.bird1 = new Bird(
             this,
-            100,
-            200,
+            Math.floor((Math.random() * (640-borderPadding*2))),
+            borderUISize*4,
             'bird',
-            0, 30
+            0, 30, 2
         );
 
         this.bird2 = new Bird(
             this,
-            300,
-            250,
+            Math.floor((Math.random() * (640-borderPadding*2))),
+            borderUISize*6 + borderUISize*2,
             'bird',
-            0,20
+            0,20, 1
         );
 
         this.bird3 = new Bird(
             this,
-            380,
-            300,
+            Math.floor((Math.random() * (640-borderPadding*2))),
+            borderUISize*8 + borderUISize*2,
             'bird',
-            0,10
+            0,10, 2
         );
 
         this.p1Score = 0;
         //  this.add.existing(this.p1Rocket);
 
         //green UI background
-        this.add.rectangle(0,borderUISize + borderPadding, 
+        this.add.rectangle(0,borderUISize + borderPadding - 20, 
                              game.config.width,
-                             borderUISize*2, 0x00FF00,).setOrigin(0,0);
+                             borderUISize*2, 0x42bcf5).setOrigin(0,0);
         //white borders
         this.add.rectangle(0, 0, game.config.width, borderUISize, 0xFFFFFF).setOrigin(0 ,0);
 	    this.add.rectangle(0, game.config.height - borderUISize, game.config.width, borderUISize, 0xFFFFFF).setOrigin(0 ,0);
@@ -79,32 +83,53 @@ class Play extends Phaser.Scene{
         
         let scoreConfig = {
             fontFamily: 'Courier',
-            fontSize: '28px',
-            backgroundColor:'#F3B141',
-            color: '#843605',
-            align: 'right',
+            fontSize: '25px',
+            backgroundColor:'#73CCF8',
+            color: '#fff',
+            align: 'center',
             padding: {
                 top: 5,
                 bottom:5,
             },
             fixedWidth: 100
         }
-        this.scoreLeft = this.add.text(borderUISize + borderPadding, borderUISize + borderPadding*2, this.p1Score, scoreConfig);
-        
+        this.scoreLeft = this.add.text(borderUISize + borderPadding, borderUISize - 10 + borderPadding*2, this.p1Score, scoreConfig);
+        scoreConfig.fixedWidth = 0;
         this.gameOver= false;
         
         //60-second
-        scoreConfig.fixedWidth = 0;
-        this.clock = this.time.delayedCall (60000, () => {
+
+        this.clock = this.time.delayedCall (game.settings.gameTimer, () => {
             this.add.text(game.config.width/2, game.config.height/2, 'GAME OVER',scoreConfig).setOrigin(0.5);
             this.add.text(game.config.width/2, game.config.height/2 + 64, 'Press (R) to Restart or ← for Menu (R) to Restart', scoreConfig).setOrigin(0.5);
             this.gameOver = true;
         },null,this);
+
+        //display time
+        let timeConfig = {
+            fontFamily: 'Courier',
+            fontSize: '20px',
+            backgroundColor:'#73CCF8',
+            color: '#fff',
+            align: 'center',
+            padding: {
+                top:5,
+                bottom:5,
+            },
+            fixedWidth: 200
+        }
+        //time counter
+        this.timeLeft = this.clock.getElapsed();
+        this.baseTime = game.settings.gameTimer;
+        this.timeDisplay = this.add.text(game.config.width - (200 + borderUISize + borderPadding), 
+        borderUISize + 15, 
+        'Timer: ' + this.timeLeft,
+         timeConfig);
     }
 
         
     update() {
-        this.sky.tilePositionX -= 0.5;
+        this.sky.tilePositionX -= bulletSpeed;
         if(!this.gameOver){
             this.p1Bullet.update();
             this.bird1.update();
@@ -121,15 +146,20 @@ class Play extends Phaser.Scene{
         if(this.checkCollision(this.p1Bullet, this.bird3)){
             this.p1Bullet.reset();
             this.birdKill(this.bird3);
+            
         }
         if(this.checkCollision(this.p1Bullet, this.bird2)){
             this.p1Bullet.reset();
             this.birdKill(this.bird2);
+            
         }
         if(this.checkCollision(this.p1Bullet, this.bird1 )){
             this.p1Bullet.reset();
             this.birdKill(this.bird1);
+            
         }
+
+        
         
 
     }
