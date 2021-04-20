@@ -3,8 +3,9 @@ class Play extends Phaser.Scene{
         super("playScene");
     }
     preload(){
-        this.load.image('starfield','assets/starfield.png');
-        this.load.image('rocket','assets/rocket.png');
+
+        this.load.image('sky','assets/sky.png');
+        this.load.image('bullet','assets/bullets.png');
         this.load.image('spaceship','assets/spaceship.png');
         this.load.spritesheet('explosion', './assets/explosion.png', {frameWidth: 64, frameHeight: 32, startFrame: 0, endFrame: 9});
         this.load.audio('sfx_explosion', './assets/explosion38.wav');
@@ -19,15 +20,15 @@ class Play extends Phaser.Scene{
             frameRate: 30
         });
 
-        this.starfield = this.add.tileSprite(
-            0,0,640,480, 'starfield'
+        this.sky = this.add.tileSprite(
+            0,0,640,480, 'sky'
         ).setOrigin(0,0);
 
-        this.p1Rocket = new Rocket(
+        this.p1Bullet = new Bullet(
             this, 
             game.config.width/2,
             game.config.height - borderUISize - borderPadding,
-            'rocket'
+            'bullet'
         );
 
         this.ship1 = new Ship(
@@ -101,9 +102,9 @@ class Play extends Phaser.Scene{
 
         
     update() {
-        this.starfield.tilePositionX -= 4;
+        this.sky.tilePositionX -= 0.5;
         if(!this.gameOver){
-            this.p1Rocket.update();
+            this.p1Bullet.update();
             this.ship1.update();
             this.ship2.update();
             this.ship3.update();
@@ -115,26 +116,26 @@ class Play extends Phaser.Scene{
             this.scene.start("menuScene");
         }
 
-        if(this.checkCollision(this.p1Rocket, this.ship3)){
-            this.p1Rocket.reset();
+        if(this.checkCollision(this.p1Bullet, this.ship3)){
+            this.p1Bullet.reset();
             this.shipExplode(this.ship3);
         }
-        if(this.checkCollision(this.p1Rocket, this.ship2)){
-            this.p1Rocket.reset();
+        if(this.checkCollision(this.p1Bullet, this.ship2)){
+            this.p1Bullet.reset();
             this.shipExplode(this.ship2);
         }
-        if(this.checkCollision(this.p1Rocket, this.ship1)){
-            this.p1Rocket.reset();
+        if(this.checkCollision(this.p1Bullet, this.ship1)){
+            this.p1Bullet.reset();
             this.shipExplode(this.ship1);
         }
         
 
     }
-    checkCollision(rocket,ship){
-        if(rocket.x < ship.x + ship.width && 
-            rocket.x + rocket.width > ship.x && 
-            rocket.y < ship.y + ship.height &&
-            rocket.height + rocket.y > ship. y){
+    checkCollision(bullet,ship){
+        if(bullet.x < ship.x + ship.width && 
+            bullet.x + bullet.width > ship.x && 
+            bullet.y < ship.y + ship.height &&
+            bullet.height + bullet.y > ship. y){
                 return true;
             }else{
                 return false;
