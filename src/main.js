@@ -4,7 +4,7 @@ Zhiheng Su, CMPM120-01
 4/19/2021
 Time Taken: 24 hrs
 
-randomize "ships" -- check. (5)
+randomize "ships" -- check. (5) (Helped from Prof Adam in office hour)
 background music -- check. (5)
 display time -- check.(10) (Help from TA Tessa Eagle)
 add time for hits -- check (20) (Thomas and Jared helped from discord)
