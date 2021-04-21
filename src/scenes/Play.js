@@ -7,7 +7,7 @@ class Play extends Phaser.Scene{
         this.load.image('sky','assets/sky.png');
         this.load.image('bullet','assets/bullets.png');
         this.load.image('bird','assets/bird.png');
-        this.load.spritesheet('explosion', './assets/explosion.png', {frameWidth: 64, frameHeight: 32, startFrame: 0, endFrame: 9});
+        this.load.spritesheet('explosion', './assets/hit.png', {frameWidth: 64, frameHeight: 32, startFrame: 0, endFrame: 9});
         //this.load.audio('sfx_explosion', './assets/explosion38.wav');
         //this.load.audio('sfx_rocket', './assets/rocket_shot.wav');
         this.load.audio('sfx_gunshot','./assets/gunshot.mp3');
